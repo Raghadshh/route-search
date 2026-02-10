@@ -5,8 +5,9 @@
 #include <unordered_map>         // hash map (fast lookup)
 #include <vector>                // dynamic array
 #include <string>                // std::string
+#include <queue>                 // for BFS queue
 
-using namespace std;          
+using namespace std;
 
 class Graph {
 private:
@@ -22,6 +23,11 @@ public:
 
     // prints what we loaded (debugging)
     void printGraph() const;
+
+    // BFS that finds how many connections it takes
+    // to get from start city to every other city
+    // unreachable cities will have distance = -1
+    unordered_map<string, int> bfsDistance(const string& start) const;
 };
 
 #endif

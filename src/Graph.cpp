@@ -7,8 +7,8 @@ void Graph::loadFromFile(const string& filename) {
 
     // if file cant open then we cant do anything
     if (!file.is_open()) {
-        cout << "Error opening file: " << filename << endl;  
-        return;                                              
+        cout << "Error opening file: " << filename << endl;
+        return;
     }
 
     string line;                            // stores each line from the file
@@ -22,7 +22,7 @@ void Graph::loadFromFile(const string& filename) {
 
         // if the line is empty then source might be "" so just skip it
         if (source == "") {
-            continue;                 
+            continue;
         }
 
         string dest;                        // destination city (to city)
@@ -32,11 +32,9 @@ void Graph::loadFromFile(const string& filename) {
             adjList[source].push_back(dest);  // add directed edge: source -> dest
             // ^ this is basically storing who you can fly to directly
         }
-
-     
     }
 
-    file.close();  
+    file.close();
 }
 
 void Graph::printGraph() const {
@@ -50,5 +48,41 @@ void Graph::printGraph() const {
 
         cout << endl;                            // new line after each city
     }
+}
 
+// BFS to find distance (number of connections) from start city
+unordered_map<string, int> Graph::bfsDistance(const string& start) const {
+    unordered_map<string, int> dist;   // stores distance from start to each city
+
+    // initialize all cities as unvisited (-1 means not reached)
+    for (auto& pair : adjList) {
+        dist[pair.first] = -1;
+    }
+
+    // if start city does not exist in the graph, just return
+    if (adjList.find(start) == adjList.end()) {
+        return dist;
+    }
+
+    queue<string> q;           // queue for BFS
+    q.push(start);             // start BFS from start city
+    dist[start] = 0;           // distance to itself is 0
+
+    // normal BFS loop
+    while (!q.empty()) {
+        string curr = q.front();   // get current city
+        q.pop();                  // remove it from queue
+
+        // go through all cities reachable from curr
+        for (const string& neighbor : adjList.at(curr)) {
+
+            // if neighbor has not been visited yet
+            if (dist[neighbor] == -1) {
+                dist[neighbor] = dist[curr] + 1;   // one more connection
+                q.push(neighbor);                  // add neighbor to queue
+            }
+        }
+    }
+
+    return dist;   // return distance map
 }
